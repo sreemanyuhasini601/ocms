@@ -12,7 +12,7 @@ export const ReimbursementList: React.FC<ReimbursementListProps> = ({ reimbursem
             {reimbursements.length > 0 ? (
                 <ul>
                     {reimbursements.map((item, index) => (
-                        <li key={index}>{item.description} - ${item.amount} ({item.status})</li>
+                        <li key={index}>{item.description} - ${item.amount} {item.department && `[${item.department}]`} ({item.status})</li>
                     ))}
                 </ul>
             ) : (

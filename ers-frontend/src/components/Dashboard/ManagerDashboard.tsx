@@ -10,8 +10,11 @@ interface ReimbursementRequest {
     reimbursementId: number;
     description: string;
     amount: number;
+    department?: string;
+    subDepartment?: string;
     status: string;
     userId: number;
+    submitterUsername?: string;
 }
 
 const ManagerDashboard = () => {
@@ -64,9 +67,14 @@ const ManagerDashboard = () => {
                 <ul>
                     {requests.map(request => (
                         <li key={request.reimbursementId}>
-                            <span>{request.description} - ${request.amount} - {request.status} </span>
+                            <span>
+                                {request.submitterUsername && <strong>Employee: {request.submitterUsername}</strong>}
+                                {request.submitterUsername && ' — '}
+                                {request.description} - ${request.amount}
+                                {request.department && ` [${request.department}${request.subDepartment ? ` - ${request.subDepartment}` : ''}]`} - {request.status}
+                            </span>
                             <button onClick={() => handleApprove(request.reimbursementId)}>Approve</button>
-                            <button className = "red" onClick={() => handleDeny(request.reimbursementId)}>Deny</button>
+                            <button className="red" onClick={() => handleDeny(request.reimbursementId)}>Deny</button>
                         </li>
                     ))}
                 </ul>

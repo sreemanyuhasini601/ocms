@@ -54,10 +54,15 @@ public class UserService {
 
     public void deleteUser(int userId) {
         Optional<User> user = userDAO.findById(userId);
-        if(user.isPresent()){
+        if (user.isPresent()) {
             userDAO.delete(user.get());
         } else {
             throw new IllegalArgumentException("User with id " + userId + " does not exist");
         }
+    }
+
+    public User findByUsername(String username) {
+        Optional<User> user = userDAO.findByUsername(username);
+        return user.orElse(null);
     }
 }

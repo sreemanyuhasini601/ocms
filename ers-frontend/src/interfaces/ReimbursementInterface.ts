@@ -3,7 +3,9 @@ export interface ReimbursementInterface {
     reimbursementId?: number;
     amount: number;
     description: string;
-    status: 'Pending' | 'Approved' | 'Denied'; // Using a union of string literals for status
-    userId: number; // Assuming every reimbursement is linked to a user
-    dateSubmitted?: Date; // Optional date field added
+    department?: string; // IT, HR, or Marketing - which department's budget to deduct from on approval
+    subDepartment?: string; // Technical, Non-Technical, Emergency
+    status: 'Pending' | 'Approved' | 'Denied' | 'PENDING' | 'APPROVED' | 'DENIED';
+    userId: number;
+    dateSubmitted?: Date;
 }

@@ -14,12 +14,17 @@ public class ReimbursementRequest {
     @Column(name = "reimbursement_id")
     private int reimbursementId;
 
-
     @Column(nullable = false)
     private double amount;
 
     @Column(length = 500)
     private String description;
+
+    @Column(name = "department", length = 50)
+    private String department; // IT, HR, or Marketing - which department's budget to deduct from on approval
+
+    @Column(name = "sub_department", length = 50)
+    private String subDepartment;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -60,6 +65,22 @@ public class ReimbursementRequest {
         this.description = description;
     }
 
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public String getSubDepartment() {
+        return subDepartment;
+    }
+
+    public void setSubDepartment(String subDepartment) {
+        this.subDepartment = subDepartment;
+    }
+
     public ReimbursementStatus getStatus() {
         return status;
     }
@@ -84,12 +105,22 @@ public class ReimbursementRequest {
         this.user = user;
     }
 
+    /**
+     * Exposes the submitter's username for API responses (employee who sent the
+     * request).
+     */
+    public String getSubmitterUsername() {
+        return user != null ? user.getUsername() : null;
+    }
+
     @Override
     public String toString() {
         return "ReimbursementRequest{" +
                 "reimbursementId=" + reimbursementId +
                 ", amount=" + amount +
                 ", description='" + description + '\'' +
+                ", department='" + department + '\'' +
+                ", subDepartment='" + subDepartment + '\'' +
                 ", status='" + status + '\'' +
                 ", dateSubmitted=" + dateSubmitted +
                 ", user=" + user +

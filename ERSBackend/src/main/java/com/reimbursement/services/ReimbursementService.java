@@ -17,15 +17,18 @@ public class ReimbursementService {
     @Autowired
     private ReimbursementDAO reimbursementDAO;
 
+    @Autowired
+    private DepartmentBudgetService departmentBudgetService;
+
     public List<ReimbursementRequest> findAll() {
-        return reimbursementDAO.findAll();
+        return reimbursementDAO.findAllWithUser();
     }
 
     @Transactional
     public ReimbursementRequest createReimbursement(ReimbursementRequest request, Integer userId) {
         try {
             User user = new User();
-            user.setUserId(userId);  // No need to parse, userId is already an Integer
+            user.setUserId(userId); // No need to parse, userId is already an Integer
             request.setDateSubmitted(LocalDate.now());
             request.setStatus(ReimbursementRequest.ReimbursementStatus.PENDING);
             request.setUser(user);
@@ -36,11 +39,16 @@ public class ReimbursementService {
         }
     }
 
+    @Transactional
     public ReimbursementRequest approveReimbursement(int id) {
         Optional<ReimbursementRequest> found = reimbursementDAO.findById(id);
         if (found.isPresent()) {
             ReimbursementRequest request = found.get();
             request.setStatus(ReimbursementRequest.ReimbursementStatus.APPROVED);
+            if (request.getDepartment() != null && !request.getDepartment().isBlank()) {
+                departmentBudgetService.deductBudget(request.getDepartment(), request.getSubDepartment(),
+                        request.getAmount());
+            }
             return reimbursementDAO.save(request);
         } else {
             throw new RuntimeException("Reimbursement request not found");

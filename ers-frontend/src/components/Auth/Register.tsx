@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaRegUserCircle, FaRegIdBadge, FaUser, FaEnvelope, FaLock, FaBriefcase } from "react-icons/fa";
+import { Icon } from "../Icon";
 import "./Auth.css";
 
 export const Register: React.FC = () => {
@@ -33,9 +34,12 @@ export const Register: React.FC = () => {
             await axios.post("http://localhost:8080/users", userData);
             alert("Registration successful! You can now log in.");
             navigate("/login");
-        } catch (error) {
+        } catch (error: unknown) {
             console.error("Registration failed", error);
-            alert("Registration failed. Please try again.");
+            const message = axios.isAxiosError(error) && error.response?.data
+                ? String(error.response.data)
+                : "Registration failed. Please try again.";
+            alert(message);
         }
     };
 
@@ -46,34 +50,34 @@ export const Register: React.FC = () => {
                 <h3>Join us to manage your reimbursements!</h3>
             </div>
             <div className="input-container">
-                <FaRegUserCircle className="icon" />
+                <Icon icon={FaRegUserCircle} className="icon" />
                 <input type="text" name="firstName" placeholder="First Name" onChange={handleChange} required />
             </div>
             <div className="input-container">
-                <FaRegIdBadge className="icon" />
+                <Icon icon={FaRegIdBadge} className="icon" />
                 <input type="text" name="lastName" placeholder="Last Name" onChange={handleChange} required />
             </div>
             <div className="input-container">
-                <FaUser className="icon" />
+                <Icon icon={FaUser} className="icon" />
                 <input type="text" name="username" placeholder="Username" onChange={handleChange} required />
             </div>
             <div className="input-container">
-                <FaEnvelope className="icon" />
+                <Icon icon={FaEnvelope} className="icon" />
                 <input type="email" name="email" placeholder="Email (optional)" onChange={handleChange} />
             </div>
             <div className="input-container">
-                <FaBriefcase className="icon" />
+                <Icon icon={FaBriefcase} className="icon" />
                 <select name="role" onChange={handleChange} required>
                     <option value="employee">Employee</option>
                     <option value="manager">Manager</option>
                 </select>
             </div>
             <div className="input-container">
-                <FaLock className="icon" />
+                <Icon icon={FaLock} className="icon" />
                 <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
             </div>
             <div className="input-container">
-                <FaLock className="icon" />
+                <Icon icon={FaLock} className="icon" />
                 <input type="password" name="confirmPassword" placeholder="Confirm Password" onChange={handleChange} required />
             </div>
             <button className="login-button" onClick={handleRegister}>Sign Up</button>

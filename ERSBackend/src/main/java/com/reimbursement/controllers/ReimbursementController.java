@@ -26,29 +26,41 @@ public class ReimbursementController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<?> getReimbursementsByUserId(@PathVariable int userId) {
+    public ResponseEntity<?> getReimbursementsByUserId(@PathVariable("userId") int userId) {
         try {
-            return ResponseEntity.ok(reimbursementService.findByUserId(userId));
+            System.out.println("Fetching reimbursements for User ID: " + userId);
+            var results = reimbursementService.findByUserId(userId);
+            System.out.println("Found " + results.size() + " reimbursements for User ID: " + userId);
+            return ResponseEntity.ok(results);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Reimbursements for user with ID " + userId + " not found");
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Reimbursements for user with ID " + userId + " not found");
         }
     }
 
     @PostMapping
-    public ResponseEntity<?> createReimbursement(@RequestBody ReimbursementRequest request, HttpSession session){
+    public ResponseEntity<?> createReimbursement(@RequestBody ReimbursementRequest request, HttpSession session) {
         try {
             Integer userId = (Integer) session.getAttribute("userId");
             if (userId == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Session expired or user not logged in.");
             }
+            System.out.println("Received Reimbursement Creation Request:");
+            System.out.println("Amount: " + request.getAmount());
+            System.out.println("Dept: " + request.getDepartment());
+            System.out.println("SubDept: " + request.getSubDepartment());
+            System.out.println("User ID: " + userId);
+
             return ResponseEntity.ok(reimbursementService.createReimbursement(request, userId));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create reimbursement: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to create reimbursement: " + e.getMessage());
         }
     }
 
     @PostMapping("/approve/{id}")
-    public ResponseEntity<?> approveReimbursement(@PathVariable int id) {
+    public ResponseEntity<?> approveReimbursement(@PathVariable("id") int id) {
         try {
             return ResponseEntity.ok(reimbursementService.approveReimbursement(id));
         } catch (Exception e) {
@@ -57,7 +69,7 @@ public class ReimbursementController {
     }
 
     @PostMapping("/deny/{id}")
-    public ResponseEntity<?> denyReimbursement(@PathVariable int id) {
+    public ResponseEntity<?> denyReimbursement(@PathVariable("id") int id) {
         try {
             return ResponseEntity.ok(reimbursementService.denyReimbursement(id));
         } catch (Exception e) {

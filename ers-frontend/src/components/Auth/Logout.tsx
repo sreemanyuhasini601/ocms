@@ -1,21 +1,28 @@
-// src/components/Auth/Logout.tsx
-
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useGlobalData } from '../../globalData/store';
 
-const Logout: React.FC = () => {
+interface LogoutProps {
+    setUserRole: (role: string | null) => void;
+}
+
+const Logout: React.FC<LogoutProps> = ({ setUserRole }) => {
     const navigate = useNavigate();
+    const { setGlobalData } = useGlobalData();
 
     useEffect(() => {
-        // Clear user session or any global state if necessary
+        // Clear user session
         sessionStorage.clear();
-        
-        // Optionally, reset any global state
-        // setGlobalData({ user: null }); // Uncomment if you have a global state management like Context API
 
-        // Redirect to login or home page
+        // Clear Global Data
+        setGlobalData(prev => ({ ...prev, user: null }));
+
+        // Clear App State
+        setUserRole(null);
+
+        // Redirect to login
         navigate('/login');
-    }, [navigate]);
+    }, [navigate, setGlobalData, setUserRole]);
 
     return (
         <div className="logout">
